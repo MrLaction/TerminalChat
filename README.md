@@ -31,7 +31,7 @@ The server always shows events in the terminal, and if `--save` is used, it also
 ### Client
 Connect to a server:
 ```bash
-./client.py --host 127.0.0.1 --port 5555 --nick Johan
+./client.py --host 127.0.0.1 --port 5555 --nick MrLaction
 ```
 
 - `--host`: server IP (e.g., `192.168.0.10` on LAN or a VPS public IP).  
@@ -40,8 +40,8 @@ Connect to a server:
 
 Example with two clients on the same machine:
 ```bash
-./client.py --host 127.0.0.1 --port 5555 --nick Juan
-./client.py --host 127.0.0.1 --port 5555 --nick José
+./client.py --host 127.0.0.1 --port 5555 --nick MrLaction1
+./client.py --host 127.0.0.1 --port 5555 --nick MrLaction2
 ```
 
 ---
