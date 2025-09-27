@@ -1,91 +1,99 @@
 # Terminal Chat App (Python + asyncio)
 
-## Descripción
-Este proyecto implementa un sistema de chat multiusuario en terminal usando Python 3 y asyncio.  
-Incluye dos componentes principales:
+## Description
+This project implements a multi-user terminal chat system using Python 3 and asyncio.  
+It includes two main components:
 
-- **Servidor (`server.py`)**: recibe conexiones de múltiples clientes, gestiona los apodos, mensajes públicos, privados y eventos. Muestra en consola todo lo que ocurre (conexiones, comandos, mensajes, errores) y, opcionalmente, puede guardar toda la sesión en un archivo.
-- **Cliente (`client.py`)**: aplicación de terminal que permite conectarse al servidor, elegir un apodo y participar en el chat en tiempo real.
+- **Server (`server.py`)**: receives connections from multiple clients, manages nicknames, public and private messages, and events. It displays everything happening in the console (connections, commands, messages, errors) and can optionally save the entire session to a file.  
+- **Client (`client.py`)**: terminal application that allows connecting to the server, choosing a nickname, and participating in the chat in real time.  
 
-El chat funciona sobre TCP puro (no HTTP), lo que lo hace ligero, rápido y fácil de usar en redes locales o a través de Internet (con IP pública o VPS).
-```
+The chat runs over pure TCP (not HTTP), making it lightweight, fast, and easy to use on local networks or over the Internet (with a public IP or VPS).  
 
-## Uso
+---
 
-### Servidor
-Por defecto escucha en 0.0.0.0:5555.
+## Usage
 
-- Ejecutar sin guardar sesión:
+### Server
+By default, it listens on 0.0.0.0:5555.
+
+- Run without saving session:
 ```bash
 ./server.py
 ```
 
-- Ejecutar guardando todo lo que ocurre en un archivo (JSON Lines):
+- Run and save everything to a file (JSON Lines):
 ```bash
 ./server.py --save chat_session.jsonl
 ```
 
-El servidor siempre muestra los eventos en la terminal y, si se usa `--save`, también los guarda en el archivo indicado.
+The server always shows events in the terminal, and if `--save` is used, it also logs them to the specified file.
 
-### Cliente
-Conectar a un servidor:
+### Client
+Connect to a server:
 ```bash
 ./client.py --host 127.0.0.1 --port 5555 --nick Johan
 ```
 
-- `--host`: IP del servidor (ej. `192.168.0.10` en LAN o IP pública de un VPS).  
-- `--port`: puerto del servidor (por defecto 5555).  
-- `--nick`: apodo inicial (opcional, también se puede poner con `/nick`).  
+- `--host`: server IP (e.g., `192.168.0.10` on LAN or a VPS public IP).  
+- `--port`: server port (default is 5555).  
+- `--nick`: initial nickname (optional, can also be set with `/nick`).  
 
-Ejemplo con dos clientes en la misma máquina:
+Example with two clients on the same machine:
 ```bash
 ./client.py --host 127.0.0.1 --port 5555 --nick Juan
 ./client.py --host 127.0.0.1 --port 5555 --nick José
 ```
 
-## Comandos disponibles
-Dentro del cliente puedes usar:
+---
 
-- **`/nick <nombre>`** → Define o cambia el apodo.  
-- **`/list`** → Lista de usuarios conectados.  
-- **`/msg <usuario> <texto>`** → Envía un mensaje privado a un usuario.  
-- **`/me <acción>`** → Envía un mensaje de acción (ej: `/me saluda`).  
-- **`/quit`** → Desconectarse del chat.  
-- **`/help`** → Mostrar ayuda de comandos.  
+## Available Commands
+Inside the client, you can use:
 
-Cualquier texto que escribas sin `/` se envía al chat público.
+- **`/nick <name>`** → Set or change nickname.  
+- **`/list`** → Show list of connected users.  
+- **`/msg <user> <text>`** → Send a private message to a user.  
+- **`/me <action>`** → Send an action message (e.g., `/me waves`).  
+- **`/quit`** → Disconnect from the chat.  
+- **`/help`** → Show command help.  
 
-## Funcionamiento interno
+Any text typed without `/` is sent to the public chat.
 
-### Flujo del servidor
-1. Acepta conexiones TCP en el puerto 5555.  
-2. Envía un mensaje de bienvenida a cada cliente.  
-3. Gestiona comandos (`/nick`, `/list`, `/msg`, etc.) y mensajes normales.  
-4. Difunde mensajes públicos a todos los clientes (broadcast).  
-5. Registra absolutamente todo lo que ocurre en consola y, si está activado, en archivo.  
-6. Maneja desconexiones y limpia los usuarios automáticamente.  
+---
 
-### Flujo del cliente
-1. Abre conexión TCP al servidor.  
-2. Lanza dos tareas:  
-   - Una lee el teclado y envía los mensajes/comandos.  
-   - Otra escucha al servidor y muestra los mensajes recibidos.  
-3. Mantiene la sesión activa hasta que el usuario escriba `/quit` o el servidor cierre la conexión.  
+## Internal Functioning
 
-## Escenarios de red
-- **LAN/WiFi local**: todos los clientes en la misma red → usar IP privada del servidor (`192.168.x.x`).  
-- **Internet (remoto)**:  
-  - Servidor con IP pública o VPS.  
-  - Puerto 5555 abierto en firewall/router.  
-  - Clientes conectan con la IP pública del servidor.  
+### Server flow
+1. Accepts TCP connections on port 5555.  
+2. Sends a welcome message to each client.  
+3. Handles commands (`/nick`, `/list`, `/msg`, etc.) and normal messages.  
+4. Broadcasts public messages to all clients.  
+5. Logs absolutely everything to the console and, if enabled, to file.  
+6. Handles disconnections and automatically cleans up users.  
 
-## Registro de sesiones
-- En consola: siempre se muestra todo en tiempo real.  
-- En archivo (`--save`): se guarda en formato JSON Lines (`.jsonl`), ideal para análisis con `jq`, Python o sistemas de logging.  
+### Client flow
+1. Opens a TCP connection to the server.  
+2. Launches two tasks:  
+   - One reads the keyboard and sends messages/commands.  
+   - The other listens to the server and displays incoming messages.  
+3. Keeps the session active until the user types `/quit` or the server closes the connection.  
 
-Ejemplo:
+---
+
+## Network Scenarios
+- **LAN/WiFi local**: all clients on the same network → use server’s private IP (`192.168.x.x`).  
+- **Internet (remote)**:  
+  - Server with public IP or VPS.  
+  - Port 5555 open on firewall/router.  
+  - Clients connect using the server’s public IP.  
+
+---
+
+## Session Logging
+- In console: always shown in real time.  
+- In file (`--save`): stored in JSON Lines format (`.jsonl`), ideal for analysis with `jq`, Python, or logging systems.  
+
+Example:
 ```json
-{"ts": "2025-09-26T23:00:00Z", "level": "INFO", "msg": "Nick set", "meta": {"new": "Johan"}}
-{"ts": "2025-09-26T23:00:05Z", "level": "INFO", "msg": "Public message", "meta": {"from": "Johan", "len": 12, "preview": "Hola a todos"}}
+{"ts": "2025-09-26T23:00:00Z", "level": "INFO", "msg": "Nick set", "meta": {"new": "MrLaction"}}
+{"ts": "2025-09-26T23:00:05Z", "level": "INFO", "msg": "Public message", "meta": {"from": "MrLaction", "len": 12, "preview": "Hello everyone"}}
 ```
-
