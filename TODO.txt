@@ -1,6 +1,0 @@
-## Posibles mejoras
-- Canales/salas (`/join #canal`).  
-- Autenticación de usuarios.  
-- Historial persistente en base de datos.  
-- Interfaz web usando WebSockets.  
-- Cifrado TLS para conexiones seguras.  
