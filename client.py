@@ -16,8 +16,7 @@ async def stdin_reader(queue: asyncio.Queue):
         if line == '':
             await queue.put('/quit')
             return
-        await queue.put(line.rstrip('\
-'))
+        await queue.put(line.rstrip('\n'))
 
 async def run_client(host: str, port: int, nick: str | None):
     try:
@@ -75,13 +74,22 @@ async def server_to_stdout(reader: asyncio.StreamReader):
     except asyncio.CancelledError:
         return
 
+def display_ascii_template(filename: str):
+    try:
+        with open(filename, 'r') as f:
+            print(f.read())
+    except FileNotFoundError:
+        print("[ERR] Template file not found")
 
 def main():
-    ap = argparse.ArgumentParser(description="Async terminal chat client")
+    ap = argparse.ArgumentParser(description="Pepe's Room chat client")
     ap.add_argument("--host", default="127.0.0.1", help="Server IP/host (default 127.0.0.1)")
     ap.add_argument("--port", type=int, default=5555, help="Server TCP port (default 5555)")
     ap.add_argument("--nick", help="Nickname (you can also set later with /nick)")
     args = ap.parse_args()
+
+    # Show the ASCII template at the beginning
+    display_ascii_template("template.txt")
 
     try:
         asyncio.run(run_client(args.host, args.port, args.nick))
