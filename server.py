@@ -6,9 +6,9 @@ import json
 from datetime import datetime
 
 WELCOME = (
-    "Welcome to AsyncChat!\n"
+    "Welcome to Pepe's Room!\n"
     "Type /help for commands.\n"
-    "First, set your nickname with: /nick <name>\n"
+    "\nFirst, set your nickname with: /nick <name>\n"
 )
 
 HELP = (
